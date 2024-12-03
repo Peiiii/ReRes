@@ -1,12 +1,14 @@
 [
     {
-        "req":"^https?:\\/\\/.*test.com",
-        "res":"http://qunar.com",
-        "checked":false
+        "name": "测试环境重定向",
+        "req": "^https?:\\/\\/.*test.com",
+        "res": "http://qunar.com",
+        "checked": false
     },
     {
-        "req":".*hanan.com",
-        "res":"http://cssha.com",
-        "checked":true
+        "name": "开发环境映射",
+        "req": ".*hanan.com",
+        "res": "http://cssha.com",
+        "checked": true
     }
 ]

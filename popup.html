@@ -2,7 +2,7 @@
 <html ng-app="reres">
 <head>
     <meta charset="UTF-8">
-    <title></title>
+    <title>ReRes Pro</title>
     <link rel="stylesheet" href="css/bootstrap.min.css"/>
     <link rel="stylesheet" href="css/popup.css"/>
     <script type="text/javascript" src="js/angular.min.js"></script>
@@ -10,50 +10,126 @@
 </head>
 <body ng-controller="mapListCtrl">
 <div class="container">
-<div class="btnBox">
-    <button tabIndex="-1" class="btn btn-primary btn-xs" ng-click="addRule()">添加规则</button>
-    <a href="options.html" target="_blank" tabIndex="-1" class="btn btn-primary btn-xs">管理规则</a>
-    <a href="https://github.com/hanan198501/ReRes" target="_blank" tabIndex="-1" class="btn btn-primary btn-xs">Github</a>
-    <a href="http://cssha.com/reres" target="_blank" tabIndex="-1" class="btn btn-primary btn-xs">使用帮助</a>
-</div>
+    <!-- 顶部导航栏 -->
+    <div class="header">
+        <div class="logo">ReRes Pro</div>
+        <div class="btnBox">
+            <button tabIndex="-1" class="btn btn-primary btn-sm" ng-click="addRule()">
+                ➕ 添加规则
+            </button>
+            <a href="options.html" target="_blank" tabIndex="-1" class="btn btn-info btn-sm">
+                ⚙️ 管理规则
+            </a>
+            <div class="btn-group">
+                <a href="https://github.com/hanan198501/ReRes" target="_blank" tabIndex="-1" class="btn btn-default btn-sm">
+                    📖 Github
+                </a>
+                <a href="http://cssha.com/reres" target="_blank" tabIndex="-1" class="btn btn-default btn-sm">
+                    ❓ 帮助
+                </a>
+            </div>
+        </div>
+    </div>
 
-<div style="display:{{editDisplay}};" class="editBox">
-    <button type="button" class="close" aria-hidden="true" ng-click="hideEditBox()">&times;</button>
-    <div class="errorMsg">{{inputError}}</div>
-    <div class="form-group">
-        <label for="req">If URL match:</label>
-        <input type="text" class="form-control" id="req" ng-model="curRule.req"/>
+    <!-- 编辑框 -->
+    <div class="edit-panel" ng-show="editDisplay === 'block'">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">{{editType}}规则</h3>
+                <button type="button" class="close" ng-click="hideEditBox()">&times;</button>
+            </div>
+            <div class="panel-body">
+                <div class="errorMsg" ng-show="inputError">{{inputError}}</div>
+                <div class="form-group">
+                    <label for="name">规则名称:</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="name" 
+                               ng-model="curRule.name" 
+                               placeholder="请选择或输入规则名称"/>
+                        <div class="input-group-btn">
+                            <button type="button" class="btn btn-default dropdown-toggle" 
+                                    data-toggle="dropdown">
+                                推荐名称 <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-right">
+                                <li ng-repeat="name in suggestedNames">
+                                    <a href="javascript:void(0)" ng-click="selectSuggestedName(name)">{{name}}</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="suggested-names" ng-if="editType === '添加'">
+                        <span class="suggested-name" 
+                              ng-repeat="name in suggestedNames" 
+                              ng-click="selectSuggestedName(name)">
+                            {{name}}
+                        </span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="req">URL匹配规则:</label>
+                    <input type="text" class="form-control" id="req" ng-model="curRule.req"/>
+                </div>
+                <div class="form-group">
+                    <label for="res">响应内容:</label>
+                    <input type="text" class="form-control" id="res" ng-model="curRule.res"/>
+                </div>
+                <div class="form-group">
+                    <label for="group">分组:</label>
+                    <input type="text" class="form-control" id="group" ng-model="curRule.group"/>
+                </div>
+                <button class="btn btn-primary btn-block" ng-click="saveRule()">保存</button>
+            </div>
+        </div>
     </div>
-    <div class="form-group">
-        <label for="res">Response:</label>
-        <input type="text" class="form-control" id="res" ng-model="curRule.res"/>
-    </div>
-    <div class="form-group">
-        <label for="res">Group:</label>
-        <input type="text" class="form-control" id="group" ng-model="curRule.group"/>
-    </div>
-    <!--<div class="form-group">
-        <label for="type">Type:</label>
-        <select ng-model="curRule.type" class="form-control" id="type">
-            <option value="file">URL映射</option>
-            <option value="dir">目录映射</option>
-        </select>
-    </div>-->
-    <button class="btn-block btn btn-primary" ng-click="saveRule()">保存</button>
-</div>
-<div ng-repeat="(group, rulesMap) in rules track by $index">
-    <h5 style="text-align: center;font-weight: bold;">[{{group || group === unidefined || '未命名'}}]</h5>
-    <table class="table table-hover">
-        <tr ng-repeat="rule in rulesMap track by $index">
-            <td>
-                <label title="Responese: {{rule.res}}"><input type="checkbox" ng-model="rule.checked"/> {{rule.req}}</label>
-                <button ng-click="edit(rule)" type="button" class="btn btn-primary btn-xs edit">编辑</button>
-                <button ng-click="removeUrl(rule)" type="button" class="btn btn-default btn-xs remove">删除</button>
-            </td>
-        </tr>
-    </table>
-</div>
 
+    <!-- 规则列表 -->
+    <div class="rules-list">
+        <div class="rule-group" ng-repeat="(group, rulesMap) in rules track by $index">
+            <div class="group-header">{{group || '默认分组'}}</div>
+            <div class="rule-items">
+                <div class="rule-item" ng-repeat="rule in rulesMap track by $index" ng-class="{'rule-active': rule.isActive}">
+                    <div class="rule-content">
+                        <label class="rule-name" title="{{rule.name}}">
+                            <label class="toggle-switch">
+                                <input type="checkbox" ng-model="rule.checked"/>
+                                <span class="toggle-slider"></span>
+                            </label>
+                            <span class="rule-title">{{rule.name || '未命名规则'}}</span>
+                        </label>
+                        <div class="rule-pattern" title="{{rule.req}}">
+                            {{rule.req}}
+                            <span class="tooltip-icon" title="{{rule.req}}">ℹ️</span>
+                        </div>
+                        <div class="rule-target" title="{{rule.res}}">
+                            {{rule.res}}
+                            <span class="tooltip-icon" title="{{rule.res}}">ℹ️</span>
+                        </div>
+                    </div>
+                    <div class="rule-actions">
+                        <button ng-click="edit(rule)" type="button" class="btn btn-primary btn-xs">
+                            ✏️ 编辑
+                        </button>
+                        <button ng-click="cloneRule(rule)" type="button" class="btn btn-info btn-xs">
+                            📋 克隆
+                        </button>
+                        <button ng-click="removeUrl(rule)" type="button" class="btn btn-danger btn-xs">
+                            🗑️ 删除
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Add empty state -->
+        <div class="empty-state" ng-if="!maps.length">
+            <div class="empty-state-icon">📝</div>
+            <div class="empty-state-text">
+                还没有添加任何规则<br>
+                点击上方"添加规则"按钮开始使用
+            </div>
+        </div>
+    </div>
 </div>
 </body>
 </html>

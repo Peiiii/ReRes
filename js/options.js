@@ -22,9 +22,10 @@ reres.controller('mapListCtrl', function($scope) {
 
     //当前编辑的规则
     $scope.curRule = {
+        name: '',
         req: '.*test\\.com',
         res: 'http://cssha.com',
-//        type: 'file',
+        group: '默认分组',
         checked: true
     }
 
@@ -47,6 +48,10 @@ reres.controller('mapListCtrl', function($scope) {
 
     //验证输入合法性
     $scope.virify = function () {
+        if (!$scope.curRule.name) {
+            $scope.inputError = '规则名称不能为空';
+            return false;
+        }
         if (!$scope.curRule.req) {
             $scope.inputError = '正则一栏输入不能为空';
             return false;
@@ -65,9 +70,10 @@ reres.controller('mapListCtrl', function($scope) {
     $scope.addRule = function () {
         if ($scope.editDisplay === 'none') {
             $scope.curRule = {
+                name: '',
                 req: '.*test\\.com',
                 res: 'http://cssha.com',
-//                type: 'file',
+                group: '默认分组',
                 checked: true
             };
             $scope.editType = '添加';
@@ -154,4 +160,43 @@ reres.controller('mapListCtrl', function($scope) {
             };
         }
     }
+
+    // 添加在 controller 内部
+    $scope.copyRule = function(rule) {
+        // 创建新规则对象，避免引用
+        var newRule = {
+            name: rule.name + ' (复制)',
+            req: rule.req,
+            res: rule.res,
+            group: rule.group,
+            checked: rule.checked
+        };
+        
+        $scope.maps.push(newRule);
+        saveData();
+    };
+
+    // 添加复制单个规则到剪贴板功能
+    $scope.copyRuleToClipboard = function(rule) {
+        var ruleText = JSON.stringify(rule, null, 2);
+        navigator.clipboard.writeText(ruleText).then(function() {
+            // 可以添加一个临时提示
+            rule.showCopyTip = true;
+            setTimeout(function() {
+                rule.showCopyTip = false;
+                $scope.$apply();
+            }, 1500);
+        });
+    };
+
+    // 添加克隆规则功能
+    $scope.cloneRule = function(rule) {
+        // 深拷贝规则对象
+        var clonedRule = angular.copy(rule);
+        // 修改名称
+        clonedRule.name = rule.name + ' (副本)';
+        // 添加到规则列表
+        $scope.maps.push(clonedRule);
+        saveData();
+    };
 });

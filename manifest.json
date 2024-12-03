@@ -1,11 +1,11 @@
 {
-    "name": "ReRes",
-    "version": "1.8.1",
-    "description": "Change the response of the request. ReRes可以用来更改页面请求响应的内容。通过指定规则，您可以把请求映射到其他的url，也可以映射到本机的文件或者目录。ReRes支持单个url映射，也支持目录映射。",
+    "name": "ReRes Pro",
+    "version": "2.0.0",
+    "description": "Change the response of the request. ReRes Pro可以用来更改页面请求响应的内容。通过指定规则，您可以把请求映射到其他的url，也可以映射到本机的文件或者目录。ReRes支持单个url映射，也支持目录映射。",
     "manifest_version": 2,
     "browser_action": {
         "default_icon": "icon.png",
-        "default_title": "ReRes",
+        "default_title": "ReRes Pro",
         "default_popup": "popup.html"
     },
     "options_page": "options.html",
@@ -23,7 +23,7 @@
         "webRequest",
         "webRequestBlocking",
         "<all_urls>",
-        "unlimitedStorage"
+        "browserAction"
     ],
     "update_url": "http://clients2.google.com/service/update2/crx"
 } 
